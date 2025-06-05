@@ -10,7 +10,7 @@ import {
 	Query,
 	UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { PageDto, ProductDto } from '../../common/types';
 import { AuthGuard } from '../../auth/guards/auth.guard';
@@ -32,7 +32,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 @UseGuards(JwtAuthGuard) // this will read Bearer token
 @Injectable()
 export class ProductsController {
-	constructor(private readonly productsService: ProductsService) {}
+	constructor(private readonly productsService: ProductsService) { }
 
 	@Post()
 	@ApiOperation({ summary: 'Create new product definition' })
@@ -52,24 +52,63 @@ export class ProductsController {
 	}
 
 	@Get('list/:id')
-	@ApiOperation({ summary: 'List all products in organization' })
-	async list(
-		@Param('id', ParseObjectIdPipe, HasOrganizationAccessPipe) orgId: Types.ObjectId,
-		@Query(
-			new PageQueryValidationPipe<ProductDto>({
-				allowedFilters: ['name', 'buyPrice', 'sellPrice', 'unit'],
-			}),
-		)
-		pageQuery: PageQueryDto<ProductDto>,
-	): Promise<PageDto<ProductDto>> {
-		const { items, meta } = await this.productsService.paginate(orgId, pageQuery);
+@ApiOperation({ summary: 'List all products in organization' })
+@ApiParam({ name: 'id', type: String, description: 'Organization ID' })
+@ApiQuery({ name: 'filter.name', required: false, type: String })
+@ApiQuery({ name: 'filter.buyPrice', required: false, type: String })
+@ApiQuery({ name: 'filter.sellPrice', required: false, type: String })
+@ApiQuery({ name: 'filter.unit', required: false, type: String })
+@ApiQuery({ name: 'page', required: false, type: Number })
+@ApiQuery({ name: 'limit', required: false, type: Number })
+@ApiQuery({ name: 'sort', required: false, type: String })
+@ApiResponse({
+	status: 200,
+	description: 'List of products in organization',
+	schema: {
+		example: {
+			meta: {
+				totalItems: 2,
+				itemCount: 2,
+				itemsPerPage: 10,
+				totalPages: 1,
+				currentPage: 1,
+			},
+			items: [
+				{
+					id: '665fd77003c31a87d9cb0201',
+					name: 'Product A',
+					unit: 'pcs',
+					buyPrice: 1000,
+					sellPrice: 1500,
+				},
+				{
+					id: '665fd77003c31a87d9cb0202',
+					name: 'Product B',
+					unit: 'box',
+					buyPrice: 5000,
+					sellPrice: 7000,
+				},
+			],
+		},
+	},
+})
+async list(
+	@Param('id', ParseObjectIdPipe, HasOrganizationAccessPipe) orgId: Types.ObjectId,
+	@Query(
+		new PageQueryValidationPipe<ProductDto>({
+			allowedFilters: ['name', 'buyPrice', 'sellPrice', 'unit'],
+		}),
+	)
+	pageQuery: PageQueryDto<ProductDto>,
+): Promise<PageDto<ProductDto>> {
+	const { items, meta } = await this.productsService.paginate(orgId, pageQuery);
 
-		const productDTOs = items.map((product) => Product.toBasicDto(product));
-		return {
-			meta,
-			items: productDTOs,
-		};
-	}
+	const productDTOs = items.map((product) => Product.toBasicDto(product));
+	return {
+		meta,
+		items: productDTOs,
+	};
+}
 
 	@Put(':id')
 	@ApiOperation({ summary: 'Update a product by id' })

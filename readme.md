@@ -18,7 +18,7 @@ A robust backend system for managing warehouse and inventory operations, built w
 
 ```bash
 git clone https://github.com/hegifebrianto/warehouse-nest.git
-cd warehouse-api
+cd warehouse-nest
 ```
 
 ### 2. Install dependencies
