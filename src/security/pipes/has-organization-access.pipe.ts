@@ -12,13 +12,24 @@ export class HasOrganizationAccessPipe implements PipeTransform<Types.ObjectId> 
 	) {}
 
 	async transform(value: Types.ObjectId): Promise<Types.ObjectId> {
-		const userId = new Types.ObjectId(this.request.user.id);
-		const hasAccess = await this.securityService.hasOrganizationAccess(value, userId);
-
-		if (!hasAccess) {
-			throw new ForbiddenException('Organization access denied');
+	  
+		const user: any = this.request.user;
+		const userIdString = user?.sub;
+	  
+		if (!userIdString) {
+		  throw new ForbiddenException('Invalid user token: missing user ID');
 		}
-
+	  
+		const userId = new Types.ObjectId(userIdString);
+		const hasAccess = await this.securityService.hasOrganizationAccess(value, userId);
+		console.log(hasAccess,'hasaccess');
+	  
+		if (!hasAccess) {
+		  throw new ForbiddenException('Organization access denied');
+		}
+	  
 		return value;
-	}
+	  }
+	  
+	  
 }

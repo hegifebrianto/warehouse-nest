@@ -13,7 +13,7 @@ export class AuthService {
 		private usersService: UsersService,
 		private jwtService: JwtService
 
-	) {}
+	) { }
 
 	async registerUser(data: UserRegisterDto): Promise<UserDocument> {
 		const hash = await this.hashPassword(data.password);
@@ -28,17 +28,19 @@ export class AuthService {
 	}
 
 	async login(user: UserDocument) {
-		const payload = { 
-		  sub: user._id.toString(), 
-		  username: (user as any).username, // atau as User kalau tipe sudah sesuai
-		};
-	  
-		return {
-		  access_token: this.jwtService.sign(payload),
-		};
-	  }
 
-	
+		const payload = {
+			sub: user._id.toString(),
+			username: user?.profile?.username || null,
+		};
+
+		return {
+			access_token: this.jwtService.sign(payload),
+		};
+	}
+
+
+
 
 	/**
 	 * Validates user password of user with provided username. This is simply

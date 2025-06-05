@@ -48,7 +48,7 @@ export class AuthController {
 	  },
 	})
 	async login(@Req() req: Request): Promise<any> {
-		return this.authService.login(req.user as any); // req.user sudah diisi oleh LocalAuthGuard
+		return this.authService.login(req.user as any); 
 	}
 
 	@UseGuards(AuthGuard)

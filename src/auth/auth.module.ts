@@ -12,18 +12,26 @@ import { BearerStrategy } from './strategies/bearer.strategy';
 import { ApiKeysModule } from '../api-keys/api-keys.module';
 import { OrganizationsModule } from '../models/organizations/organizations.module';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
 
 @Module({
 	imports: [
+		ConfigModule,
 		PassportModule.register({ session: true }),
 		ApiKeysModule,
 		forwardRef(() => UsersModule),
 		forwardRef(() => AuthEmailsModule),
 		forwardRef(() => OrganizationsModule),
-		JwtModule.register({
-			secret: process.env.JWT_SECRET || 'default_secret',
-			signOptions: { expiresIn: '1d' },
-		  })
+		JwtModule.registerAsync({
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: (config: ConfigService) => ({
+			  secret: config.get<string>('JWT_SECRET'),
+			  signOptions: { expiresIn: '1d' },
+			}),
+		  }),
 	],
 	controllers: [AuthController],
 	providers: [
@@ -33,6 +41,7 @@ import { JwtModule } from '@nestjs/jwt';
 		SessionSerializer,
 		UsernameNotTakenRule,
 		EmailNotTakenRule,
+		JwtStrategy
 	],
 	exports: [AuthService],
 })

@@ -24,10 +24,12 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
 import { Product } from './schemas/product.schema';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('products')
 @Controller('products')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard) // this will read Bearer token
 @Injectable()
 export class ProductsController {
 	constructor(private readonly productsService: ProductsService) {}

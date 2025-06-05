@@ -1,9 +1,13 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
 export type UserAuthDocument = HydratedDocument<UserAuth>;
 
+@Schema()
 export class UserAuth {
+	@Prop()
+	username?: string | null;
+
 	@Prop()
 	password: string | null;
 
