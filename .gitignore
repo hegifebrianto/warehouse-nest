@@ -36,6 +36,7 @@ lerna-debug.log*
 
 .turbo
 .env
+.env.prod
 globalConfig
 **/**/coverage
 apps/api/test/globalConfig.json
