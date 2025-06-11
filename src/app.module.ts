@@ -25,9 +25,7 @@ import { ApiKeysModule } from './api-keys/api-keys.module';
 
 import { ConfigModule } from '@nestjs/config';
 
-const FrontendModule = ServeStaticModule.forRoot({
-	rootPath: join(__dirname, '../..', 'client', 'dist'),
-});
+
 
 @Module({
 	imports: [
@@ -44,7 +42,7 @@ const FrontendModule = ServeStaticModule.forRoot({
 				delay: 500,
 			},
 		}),
-		FrontendModule,
+		
 		ProductsModule,
 		WarehousesModule,
 		UsersModule,
