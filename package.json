@@ -6,7 +6,7 @@
         "start": "nest start",
         "dev": "nest start --watch --preserveWatchOutput",
         "start:debug": "nest start --debug --watch",
-        "start:prod": "node dist/main",
+        "start:prod": "node --max-old-space-size=512 dist/main",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
         "lint:fix": "npm run lint -- --fix",
         "test": "jest",
