@@ -27,10 +27,11 @@ import { CreateInventoryItemDto } from './dto/create-inventory-item.dto';
 import { UpdateInventoryItemDto } from './dto/update-inventory-item.dto';
 import { InventoryService } from './inventory.service';
 import { InventoryItem } from './schemas/inventory-item.schema';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('inventory')
 @Controller('inventory')
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard) // this will read Bearer token
 export class InventoryController {
 	constructor(private readonly inventoryService: InventoryService) {}
 
@@ -70,8 +71,8 @@ export class InventoryController {
 	@Get('by-product')
 	@ApiOperation({ summary: 'Get inventory item by warehouse id and product id' })
 	async findByProduct(
-		@Query('warehouseId', ParseObjectIdPipe, HasWarehouseAccessPipe) warehouseId: Types.ObjectId,
-		@Query('productId', ParseObjectIdPipe, HasProductAccessPipe) productId: Types.ObjectId,
+		@Query('warehouseId', ParseObjectIdPipe, ) warehouseId: Types.ObjectId,
+		@Query('productId', ParseObjectIdPipe, ) productId: Types.ObjectId,
 	): Promise<InventoryItemDto> {
 		const item = await this.inventoryService.findByProduct(warehouseId, productId);
 
@@ -85,7 +86,7 @@ export class InventoryController {
 	@Get('by-warehouse/:id')
 	@ApiOperation({ summary: 'List inventory items in warehouse' })
 	async list(
-		@Param('id', ParseObjectIdPipe, HasWarehouseAccessPipe) warehouseId: Types.ObjectId,
+		@Param('id', ParseObjectIdPipe, ) warehouseId: Types.ObjectId,
 		@Query(
 			new PageQueryValidationPipe<BasicInventoryItemDto>({
 				allowedFilters: ['quantity'],
@@ -106,7 +107,7 @@ export class InventoryController {
 	@Get(':id')
 	@ApiOperation({ summary: 'Get inventory item by id' })
 	async findOne(
-		@Param('id', ParseObjectIdPipe, HasInventoryAccessPipe) id: Types.ObjectId,
+		@Param('id', ParseObjectIdPipe, ) id: Types.ObjectId,
 	): Promise<InventoryItemDto> {
 		const item = await this.inventoryService.findOne(id);
 		return InventoryItem.toDto(item);

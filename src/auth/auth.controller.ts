@@ -25,6 +25,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { NotOrgOwnerGuard } from '../models/users/guards/org-owner.guard';
 import { LoginDto } from './dto/login.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -51,7 +52,7 @@ export class AuthController {
 		return this.authService.login(req.user as any); 
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(JwtAuthGuard) // this will read Bearer token
 	@HttpCode(200)
 	@Post('logout')
 	logout(@Req() request: Request): Promise<any> {
@@ -79,12 +80,12 @@ export class AuthController {
 
 	@Post('change-password')
 	@UseGuards(NotDemoGuard)
-	@UseGuards(AuthGuard)
+	@UseGuards(JwtAuthGuard) // this will read Bearer token
 	async changePassword(
 		@Req() request: Request,
 		@Body() body: ChangePasswordDto,
 	): Promise<PrivateUserDto> {
-		const userId = new Types.ObjectId(request.user.id);
+		const userId = new Types.ObjectId(request.user.sub);
 		const user = await this.authService.validateUserByUserId(userId, body.oldPassword);
 
 		if (!user) {
@@ -97,9 +98,9 @@ export class AuthController {
 
 	@Post('change-email')
 	@UseGuards(NotDemoGuard)
-	@UseGuards(AuthGuard)
+	@UseGuards(JwtAuthGuard) // this will read Bearer token
 	async changeEmail(@Req() request: Request, @Body() dto: UpdateEmailDto) {
-		const userId = new Types.ObjectId(request.user.id);
+		const userId = new Types.ObjectId(request.user.sub);
 		const user = await this.authService.validateUserByUserId(userId, dto.password);
 
 		if (!user) {
@@ -113,11 +114,11 @@ export class AuthController {
 	}
 
 	@Delete('delete')
-	@UseGuards(AuthGuard)
+	@UseGuards(JwtAuthGuard) // this will read Bearer token
 	@UseGuards(NotDemoGuard)
 	@UseGuards(NotOrgOwnerGuard)
 	async deleteAccount(@Req() request: Request, @Body() dto: DeleteAccountDto) {
-		const userId = new Types.ObjectId(request.user.id);
+		const userId = new Types.ObjectId(request.user.sub);
 		const user = await this.authService.validateUserByUserId(userId, dto.password);
 
 		if (!user) {

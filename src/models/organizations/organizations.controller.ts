@@ -38,10 +38,11 @@ import { OrganizationsService } from './organizations.service';
 import { OrgSettings } from './schemas/org-settings';
 import { Organization } from './schemas/organization.schema';
 import { HasAdminAccessPipe } from '../../security/pipes/has-admin-access.pipe';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('organizations')
 @Controller('organizations')
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard) // this will read Bearer token
 export class OrganizationsController {
 	constructor(
 		private readonly organizationsService: OrganizationsService,
@@ -55,7 +56,7 @@ export class OrganizationsController {
 		@Body() createOrganizationDto: CreateOrganizationDto,
 		@Req() request: Request,
 	): Promise<OrganizationDto> {
-		const user = new Types.ObjectId(request.user.id);
+		const user = new Types.ObjectId(request.user.sub);
 
 		const org = await this.organizationsService.create(createOrganizationDto);
 		const warehouse = await this.warehousesService.create(org._id, createOrganizationDto.warehouse);
@@ -82,9 +83,9 @@ export class OrganizationsController {
 		)
 		pageQuery: PageQueryDto<OrganizationDto>,
 	): Promise<PageDto<OrganizationDto>> {
-		const userId = new Types.ObjectId(request.user.id);
+		const userId = new Types.ObjectId(request.user.sub);
+		
 		const { items, meta } = await this.organizationsService.paginateAllForUser(userId, pageQuery);
-
 		const orgDTOs = items.map((org) => Organization.toDto(org));
 		return {
 			meta,
@@ -98,7 +99,7 @@ export class OrganizationsController {
 		description: 'This is mostly an internal check called when deleting user account',
 	})
 	async ownerCheck(@Req() request: Request): Promise<GenericResponseDto> {
-		const userId = new Types.ObjectId(request.user.id);
+		const userId = new Types.ObjectId(request.user.sub);
 		const response = await this.organizationsService.isUserOwnerOfAny(userId);
 		return { response };
 	}
@@ -131,7 +132,7 @@ export class OrganizationsController {
 	@Get(':id')
 	@ApiOperation({ summary: 'Get a organization by id' })
 	async findById(
-		@Param('id', ParseObjectIdPipe, HasOrganizationAccessPipe) id: Types.ObjectId,
+		@Param('id', ParseObjectIdPipe /*, HasOrganizationAccessPipe */) id: Types.ObjectId
 	): Promise<OrganizationDto> {
 		const org = await this.organizationsService.findById(id);
 		return Organization.toDto(org);

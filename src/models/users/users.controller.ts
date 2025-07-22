@@ -19,17 +19,18 @@ import { ParseObjectIdPipe } from '../../pipes/prase-object-id.pipe';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
 import { UsersService } from './users.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('users')
 @ApiTags('users')
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard) // this will read Bearer token
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
 	@Get('me')
 	@ApiOperation({ summary: 'Get authenticated user data' })
 	async findAuthenticated(@Req() request: Request): Promise<PrivateUserDto> {
-		const userId = new Types.ObjectId(request.user.id);
+		const userId = new Types.ObjectId(request.user.sub);
 		const user = await this.usersService.findById(userId);
 
 		if (!user) {
@@ -54,7 +55,7 @@ export class UsersController {
 	@Put()
 	@ApiOperation({ summary: 'Update authenticated user profile' })
 	async updateProfile(@Req() request: Request, @Body() dto: UpdateUserDto) {
-		const userId = new Types.ObjectId(request.user.id);
+		const userId = new Types.ObjectId(request.user.sub);
 
 		const user = await this.usersService.findById(userId);
 		if (!user) {

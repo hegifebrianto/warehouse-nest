@@ -14,7 +14,7 @@ export class HasOwnerAccessPipe implements PipeTransform<Types.ObjectId> {
 	) {}
 
 	async transform(value: Types.ObjectId): Promise<Types.ObjectId> {
-		const userId = new Types.ObjectId(this.request.user.id);
+		const userId = new Types.ObjectId(this.request.user.sub);
 		const role = await this.securityService.getUserRole(value, userId);
 
 		const hasAccess = SecurityUtils.isRoleEnough(role, OrganizationSecurityRole.OWNER);

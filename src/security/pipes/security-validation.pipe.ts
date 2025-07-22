@@ -28,7 +28,7 @@ export class SecurityValidationPipe<T> implements PipeTransform<T> {
 	private lockedOrganizationId: Types.ObjectId | null = null;
 
 	async transform(dto: T): Promise<T> {
-		const userId = new Types.ObjectId(this.request.user.id);
+		const userId = new Types.ObjectId(this.request.user.sub);
 
 		for (const propertyKey in dto) {
 			const metadata = this.getPropertyMetadata(dto, propertyKey);

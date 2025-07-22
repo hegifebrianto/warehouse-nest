@@ -28,7 +28,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('products')
 @Controller('products')
-// @UseGuards(AuthGuard)
+// @UseGuards(JwtAuthGuard) // this will read Bearer token
 @UseGuards(JwtAuthGuard) // this will read Bearer token
 @Injectable()
 export class ProductsController {

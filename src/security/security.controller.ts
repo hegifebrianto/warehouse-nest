@@ -96,7 +96,8 @@ export class SecurityController {
 		@Req() request: Request,
 		@Param('org', ParseObjectIdPipe, HasOrganizationAccessPipe) org: Types.ObjectId,
 	): Promise<any> {
-		const requester = new Types.ObjectId(request.user.id);
+		const requester = new Types.ObjectId(request.user.sub);
+
 		const role = await this.securityService.getUserRole(org, requester);
 
 		if (role == OrganizationSecurityRole.OWNER) {
@@ -144,7 +145,8 @@ export class SecurityController {
 		@Req() request: Request,
 		@Param('org', ParseObjectIdPipe, HasOrganizationAccessPipe) organization: Types.ObjectId,
 	): Promise<SecurityRuleDto> {
-		const requester = new Types.ObjectId(request.user.id);
+		const requester = new Types.ObjectId(request.user.sub);
+
 		const role = await this.securityService.getUserRole(organization, requester);
 
 		return { user: requester.toString(), role };
@@ -155,7 +157,8 @@ export class SecurityController {
 		request: Request,
 	) {
 		const org = new Types.ObjectId(dto.organization);
-		const requester = new Types.ObjectId(request.user.id);
+		const requester = new Types.ObjectId(request.user.sub);
+
 		const target = new Types.ObjectId(dto.user);
 
 		if (requester.equals(target)) {

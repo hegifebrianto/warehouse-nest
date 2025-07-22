@@ -8,14 +8,14 @@ export class ConfirmedGuard implements CanActivate {
 	constructor(private readonly userService: UsersService) {}
 
 	async canActivate(context: ExecutionContext) {
-		const request = context.switchToHttp().getRequest<Request>();
+		const request:any = context.switchToHttp().getRequest<Request>();
 
 		const sessionDataConfirmed = request.user.isConfirmed;
 		if (sessionDataConfirmed) {
 			return true;
 		}
 
-		const userId = new Types.ObjectId(request.user.id);
+		const userId = new Types.ObjectId(request.user.sub);
 		const user = await this.userService.findById(userId);
 		const dbDataConfirmed = user.profile.isConfirmed;
 		if (!dbDataConfirmed) {

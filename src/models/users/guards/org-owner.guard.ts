@@ -9,7 +9,7 @@ export class NotOrgOwnerGuard implements CanActivate {
 
 	async canActivate(context: ExecutionContext) {
 		const request = context.switchToHttp().getRequest<Request>();
-		const user = new Types.ObjectId(request.user.id);
+		const user = new Types.ObjectId(request.user.sub);
 
 		const isOwner = await this.organizationsService.isUserOwnerOfAny(user);
 

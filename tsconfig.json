@@ -21,6 +21,8 @@
         "paths": {
             "shared-types": ["src/shared-types"],
             "shared-types/*": ["src/shared-types/*"]
-        }
+        },
+        "typeRoots": ["./node_modules/@types", "./src/types"]
+
     }
 }

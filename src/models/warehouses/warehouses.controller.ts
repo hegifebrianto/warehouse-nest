@@ -9,6 +9,7 @@ import {
 	Post,
 	Put,
 	Query,
+	UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
@@ -23,9 +24,12 @@ import { CreateWarehouseInOrgDto } from './dto/create-warehouse-in-org.dto';
 import { UpdateWarehouseDto } from './dto/update-warehouse.dto';
 import { Warehouse } from './schemas/warehouse.schema';
 import { WarehousesService } from './warehouses.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('warehouses')
 @Controller('warehouses')
+@UseGuards(JwtAuthGuard) // this will read Bearer token
+
 export class WarehousesController {
 	constructor(private readonly warehousesService: WarehousesService) {}
 
@@ -52,7 +56,7 @@ export class WarehousesController {
 	@Get('list/:id')
 	@ApiOperation({ summary: 'List warehouses in organization' })
 	async list(
-		@Param('id', ParseObjectIdPipe, HasOrganizationAccessPipe) orgId: Types.ObjectId,
+		@Param('id', ParseObjectIdPipe/*, HasOrganizationAccessPipe*/) orgId: Types.ObjectId,
 		@Query(
 			new PageQueryValidationPipe<WarehouseDto>({
 				allowedFilters: ['name', 'totalValue', 'address'],

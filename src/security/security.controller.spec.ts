@@ -91,7 +91,8 @@ describe('SecurityController', () => {
 			const orgId = new Types.ObjectId();
 			const targetId = new Types.ObjectId();
 			const request = mockUserRequest;
-			const requester = new Types.ObjectId(request.user.id);
+			const requester = new Types.ObjectId(request.user.sub);
+
 
 			mockSecurityService.getUserRole.mockImplementation((org, user) => {
 				if (targetId.equals(user)) {
@@ -121,7 +122,8 @@ describe('SecurityController', () => {
 			const orgId = new Types.ObjectId();
 			const targetId = new Types.ObjectId();
 			const request = mockUserRequest;
-			const requester = new Types.ObjectId(request.user.id);
+			const requester = new Types.ObjectId(request.user.sub);
+
 
 			mockSecurityService.getUserRole.mockImplementation((org, user) => {
 				if (targetId.equals(user)) {
@@ -148,7 +150,8 @@ describe('SecurityController', () => {
 		const orgId = new Types.ObjectId();
 		const targetId = new Types.ObjectId();
 		const request = mockUserRequest;
-		const requester = new Types.ObjectId(request.user.id);
+		const requester = new Types.ObjectId(request.user.sub);
+
 
 		mockSecurityService.getUserRole.mockImplementation((org, user) => {
 			if (targetId.equals(user)) {
@@ -177,7 +180,7 @@ describe('SecurityController', () => {
 
 			await controller.leave(request, orgId);
 
-			expect(mockSecurityService.deleteRule).toBeCalledWith(orgId, request.user.id);
+			expect(mockSecurityService.deleteRule).toBeCalledWith(orgId, request.user.sub);
 		});
 
 		it('should not leave organization when requester is owner', async () => {

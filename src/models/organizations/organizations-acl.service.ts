@@ -19,14 +19,15 @@ export class OrganizationsAclService {
 		if (!organization) return null;
 		return organization.acls;
 	}
-
-	async getRule(organizationId: Types.ObjectId, user: Types.ObjectId): Promise<AccessRule | null> {
-		const allRules = await this.getAllRules(organizationId);
-		if (!allRules) return null;
-
-		const rule = allRules.find((rule) => rule.user.equals(user));
-		return rule;
+	async getRule(organizationId: Types.ObjectId, userId: Types.ObjectId): Promise<AccessRule | null> {
+		const org = await this.organizationRepository.findById(organizationId, { acls: 1 });
+		if (!org?.acls || !Array.isArray(org.acls)) return null;
+	
+		const rule = org.acls.find(rule => rule.user.toString() === userId.toString());
+		return rule ?? null;
 	}
+	
+	
 
 	async addRule(organization: Types.ObjectId, rule: AccessRule): Promise<OrganizationDocument> {
 		return this.organizationRepository.findOneAndUpdate(

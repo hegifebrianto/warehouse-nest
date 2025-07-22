@@ -38,8 +38,8 @@ describe('ApiKeysController', () => {
 
 		const keyDto = await controller.get(request);
 
-		expect(keyDto.user).toStrictEqual(request.user.id);
-		expect(keyDto.apiKey.startsWith(request.user.id)).toBe(true);
+		expect(keyDto.user).toStrictEqual(request.user.sub);
+		expect(keyDto.apiKey.startsWith(request.user.sub)).toBe(true);
 	});
 
 	it('should regenerate api key', async () => {
@@ -47,7 +47,7 @@ describe('ApiKeysController', () => {
 
 		const keyDto = await controller.regenerate(request);
 
-		expect(keyDto.user).toStrictEqual(request.user.id);
-		expect(keyDto.apiKey.startsWith(request.user.id)).toBe(true);
+		expect(keyDto.user).toStrictEqual(request.user.sub);
+		expect(keyDto.apiKey.startsWith(request.user.sub)).toBe(true);
 	});
 });

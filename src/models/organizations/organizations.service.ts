@@ -79,6 +79,7 @@ export class OrganizationsService {
 	}
 
 	async paginateAllForUser(id: Types.ObjectId, pageQueryDto: PageQueryDto) {
+		console.log(id,'zxcasd');
 		return this.organizationRepository.paginate({ 'acls.user': id }, pageQueryDto);
 	}
 

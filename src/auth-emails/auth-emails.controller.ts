@@ -6,6 +6,7 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { ParseObjectIdPipe } from '../pipes/prase-object-id.pipe';
 import { AuthEmailsService } from './auth-emails.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('auth-emails')
 @ApiTags('auth-emails')
@@ -13,9 +14,9 @@ export class AuthEmailsController {
 	constructor(private readonly authEmailsService: AuthEmailsService) {}
 
 	@Post('confirm-email/start')
-	@UseGuards(AuthGuard)
+	@UseGuards(JwtAuthGuard) // this will read Bearer token
 	async startEmailConfirmation(@Req() request: Request): Promise<any> {
-		const userId = new Types.ObjectId(request.user.id);
+		const userId = new Types.ObjectId(request.user.sub);
 		await this.authEmailsService.sendEmailConfirmation(userId);
 		return { statusCode: 200 };
 	}

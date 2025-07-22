@@ -19,7 +19,7 @@ describe('HasAdminAccessPipe', () => {
 
 	it('should pass on admin', () => {
 		const request = { ...mockUserRequest } as any;
-		request.user.id = ORG_ADMIN;
+		request.user.sub = ORG_ADMIN;
 
 		const pipe = new HasAdminAccessPipe(request, securityServiceMock);
 		expect(pipe.transform(VALID_ORG_ID)).resolves.toStrictEqual(VALID_ORG_ID);
@@ -27,7 +27,7 @@ describe('HasAdminAccessPipe', () => {
 
 	it('should fail on member', () => {
 		const request = { ...mockUserRequest } as any;
-		request.user.id = new Types.ObjectId();
+		request.user.sub = new Types.ObjectId();
 
 		const pipe = new HasAdminAccessPipe(request, securityServiceMock);
 		expect(pipe.transform(VALID_ORG_ID)).rejects.toThrowError(ForbiddenException);

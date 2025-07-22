@@ -16,13 +16,13 @@ export class ApiKeysController {
 
 	@Get()
 	get(@Req() request: Request): Promise<ApiKeyDto> {
-		const userId = new Types.ObjectId(request.user.id);
+		const userId = new Types.ObjectId(request.user.sub);
 		return this.apiKeysService.getKeyForUser(userId);
 	}
 
 	@Post('regenerate')
 	regenerate(@Req() request: Request) {
-		const userId = new Types.ObjectId(request.user.id);
+		const userId = new Types.ObjectId(request.user.sub);
 		return this.apiKeysService.regenerateKeyForUser(userId);
 	}
 }

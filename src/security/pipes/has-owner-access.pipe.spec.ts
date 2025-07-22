@@ -19,7 +19,7 @@ describe('HasOwnerAccessPipe', () => {
 
 	it('should pass on owner', () => {
 		const request = { ...mockUserRequest } as any;
-		request.user.id = ORG_OWNER;
+		request.user.sub = ORG_OWNER;
 
 		const pipe = new HasOwnerAccessPipe(request, securityServiceMock);
 		expect(pipe.transform(VALID_ORG_ID)).resolves.toStrictEqual(VALID_ORG_ID);
@@ -27,7 +27,7 @@ describe('HasOwnerAccessPipe', () => {
 
 	it('should fail on member', () => {
 		const request = { ...mockUserRequest } as any;
-		request.user.id = new Types.ObjectId();
+		request.user.sub = new Types.ObjectId();
 
 		const pipe = new HasOwnerAccessPipe(request, securityServiceMock);
 		expect(pipe.transform(VALID_ORG_ID)).rejects.toThrowError(ForbiddenException);

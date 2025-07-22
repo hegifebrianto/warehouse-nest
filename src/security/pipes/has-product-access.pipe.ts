@@ -22,7 +22,7 @@ export class HasProductAccessPipe implements PipeTransform<Types.ObjectId> {
 	) {}
 
 	async transform(value: Types.ObjectId): Promise<Types.ObjectId> {
-		const userId = new Types.ObjectId(this.request.user.id);
+		const userId = new Types.ObjectId(this.request.user.sub);
 
 		const organization = await this.organizationResolverService.resolve(
 			value,
